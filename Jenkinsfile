@@ -10,7 +10,8 @@ node('master') {
 	stage('SonarQube Scan') {
 		node {
 			withSonarQubeEnv('Default SonarQube server') {
-				sh 'mvn clean verify -f ci-jenkins-demo/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
+				sh 'mvn clean verify';
+				sh 'mvn sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
 			} // SonarQube taskId is automatically attached to the pipeline context
 
 		}
