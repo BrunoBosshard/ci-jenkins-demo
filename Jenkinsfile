@@ -1,4 +1,4 @@
-def readpom = readMavenPom file: '';
+def readpom;
 node('master') {
 	stage('Poll') {
 		checkout scm
@@ -11,6 +11,7 @@ node('master') {
 	stage('SonarQube Scan') {
 		node {
 			withSonarQubeEnv('Default SonarQube server') {
+				readpom = readMavenPom file: '';
 				sh 'mvn clean verify readpom sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
 			} // SonarQube taskId is automatically attached to the pipeline context
 
