@@ -10,8 +10,8 @@ node('master') {
 	stage('SonarQube Scan') {
 		node {
 			withSonarQubeEnv('Default SonarQube server') {
-				sh 'mvn "org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar"'
-				sh 'mvn clean verify sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
+				sh 'mvn sonar:sonar'
+				// sh 'mvn clean verify sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
 			} // SonarQube taskId is automatically attached to the pipeline context
 
 		}
