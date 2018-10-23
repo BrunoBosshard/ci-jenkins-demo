@@ -7,20 +7,12 @@ node('master') {
 		junit '**/target/surefire-reports/TEST-*.xml'
 		archive 'target/*.jar'
 	}
-//	stage('SonarQube Scan') {
-//		withSonarQubeEnv('Default SonarQube server') {
-//			sh 'mvn clean verify sonar:sonar -Dsonar.projectName=example-project 
-//			-Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
-//		} // SonarQube taskId is automatically attached to the pipeline context
-//	}
-//	stage("Quality Gate") {
-//		timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
-//			def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
-//			if (qg.status != 'OK') {
-//				error "Pipeline aborted due to quality gate failure: ${qg.status}"
-//			}
-//		}
-//	}
+	stage('SonarQube Scan') {
+		withSonarQubeEnv('Default SonarQube server') {
+			sh 'mvn clean verify sonar:sonar -Dsonar.projectName=example-project 
+			-Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
+		} // SonarQube taskId is automatically attached to the pipeline context
+	}
 	stage ('Integration Test'){
 		sh 'mvn clean verify -Dsurefire.skip=true';
 		junit '**/target/failsafe-reports/TEST-*.xml'
@@ -38,5 +30,14 @@ node('master') {
 			]
 		}"""
 		server.upload(uploadSpec)
+	}
+}
+// No need to occupy a node
+stage('Quality Gate') {
+	timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
+		def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
+		if (qg.status != 'OK') {
+			error "Pipeline aborted due to quality gate failure: ${qg.status}"
+		}
 	}
 }
