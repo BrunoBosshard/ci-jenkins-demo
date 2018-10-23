@@ -1,3 +1,4 @@
+def workspace = pwd();
 node('master') {
 	stage('Poll') {
 		checkout scm
@@ -9,7 +10,6 @@ node('master') {
 	}
 	stage('SonarQube Scan') {
 		node {
-			def workspace = pwd();
 			withSonarQubeEnv('Default SonarQube server') {
 				sh 'mvn clean verify -f workspace/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
 			} // SonarQube taskId is automatically attached to the pipeline context
