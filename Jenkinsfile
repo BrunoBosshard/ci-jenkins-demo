@@ -29,7 +29,7 @@ node('master') {
 				echo "${JENKINS_URL}"
 				echo "${BUILD_URL}"
 				echo "${JOB_URL}"
-				sh 'mvn clean verify -f $JOB_NAME/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
+				sh 'mvn clean verify f $JOB_NAME/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
 //				sh 'mvn clean verify f /var/lib/jenkins/workspace/ci-demo/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
 			} // SonarQube taskId is automatically attached to the pipeline context
 
