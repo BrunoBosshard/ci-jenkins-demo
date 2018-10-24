@@ -10,7 +10,7 @@ node('master') {
 	stage('SonarQube Scan') {
 		node {
 			withSonarQubeEnv('Default SonarQube server') {
-				echo "${CHANGE_ID}"
+				echo "{$CHANGE_ID}"
 				echo '$CHANGE_URL'
 				echo '$CHANGE_TITLE'
 				echo '$CHANGE_AUTHOR'
