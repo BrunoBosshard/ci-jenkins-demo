@@ -1,7 +1,6 @@
 node('master') {
 	stage('Poll') {
 		checkout scm
-		def workspace = pwd()
 	}
 	stage('Build and Unit test'){
 		sh 'mvn clean verify -DskipITs=true';
@@ -12,8 +11,8 @@ node('master') {
 		node {
 			withSonarQubeEnv('Default SonarQube server') {
 echo "Watch this"
-echo "${workspace}"
-				sh 'mvn clean verify -f ${workspace}/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
+echo "$JOB_NAME"
+				sh 'mvn clean verify -f $JOB_NAME/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
 //				sh 'mvn clean verify f /var/lib/jenkins/workspace/ci-demo/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
 			} // SonarQube taskId is automatically attached to the pipeline context
 
