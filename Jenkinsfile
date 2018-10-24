@@ -8,7 +8,7 @@ node('master') {
 		junit '**/target/surefire-reports/TEST-*.xml'
 		archive 'target/*.jar'
 	}
-	stage('SonarQube Scan and Quality Gate') {
+	stage('SonarQube Scan') {
 		node {
 			withSonarQubeEnv('Default SonarQube server') {
 				sh 'mvn clean verify -f $POMPATH/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
