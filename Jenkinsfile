@@ -1,6 +1,8 @@
 node('master') {
 	stage('Poll') {
 		checkout scm
+		env.POMPATH = "${env.WORKSPACE}"
+		echo "${env.POMPATH}"
 	}
 	stage('Build and Unit test'){
 		sh 'mvn clean verify -DskipITs=true';
