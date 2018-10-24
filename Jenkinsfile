@@ -1,6 +1,6 @@
 node('master') {
 	def workspace = pwd()
-	echo "Watch this!"
+	echo 'Watch this!'
 	echo ${workspace}
 	stage('Poll') {
 		checkout scm
