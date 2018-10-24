@@ -1,12 +1,6 @@
 node('master') {
 	stage('Poll') {
 		checkout scm
-		steps {
-	                script {
-        	            env.POMPATH = "${env.WORKSPACE}"
-                	}
-                	echo "${env.POMPATH}"
-		}
 	}
 	stage('Build and Unit test'){
 		sh 'mvn clean verify -DskipITs=true';
@@ -67,4 +61,4 @@ node('master') {
 		}"""
 		server.upload(uploadSpec)
 	}
-} 
+}
