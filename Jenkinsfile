@@ -11,24 +11,24 @@ node('master') {
 		node {
 			withSonarQubeEnv('Default SonarQube server') {
 				echo "${env.CHANGE_ID}"
-				echo '$CHANGE_URL'
-				echo '$CHANGE_TITLE'
-				echo '$CHANGE_AUTHOR'
-				echo '$CHANGE_AUTHOR_DISPLAY_NAME'
-				echo '$CHANGE_AUTHOR_EMAIL'
-				echo '$CHANGE_TARGET'
-				echo '$BUILD_NUMBER'
-				echo '$BUILD_ID'
-				echo '$BUILD_DISPLAY_NAME'
-				echo '$JOB_NAME'
-				echo '$EXECUTOR_NUMBER'
-				echo '$NODE_NAME'
-				echo '$NODE_LABELS'
-				echo '$WORKSPACE'
-				echo '$JENKINS_HOME'
-				echo '$JENKINS_URL'
-				echo '$BUILD_URL'
-				echo '$JOB_URL'
+				echo "${env.CHANGE_URL}"
+				echo "${env.CHANGE_TITLE}"
+				echo "${env.CHANGE_AUTHOR}"
+				echo "${env.CHANGE_AUTHOR_DISPLAY_NAME}"
+				echo "${env.CHANGE_AUTHOR_EMAIL}"
+				echo "${env.CHANGE_TARGET}"
+				echo "${env.BUILD_NUMBER}"
+				echo "${env.BUILD_ID}"
+				echo "${env.BUILD_DISPLAY_NAME}"
+				echo "${env.JOB_NAME}"
+				echo "${env.EXECUTOR_NUMBER}"
+				echo "${env.NODE_NAME}"
+				echo "${env.NODE_LABELS}"
+				echo "${env.WORKSPACE}"
+				echo "${env.JENKINS_HOME}"
+				echo "${env.JENKINS_URL}"
+				echo "${env.BUILD_URL}"
+				echo "${env.JOB_URL}"
 				sh 'mvn clean verify -f $JOB_NAME/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
 //				sh 'mvn clean verify -f /var/lib/jenkins/workspace/ci-demo/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
 			} // SonarQube taskId is automatically attached to the pipeline context
