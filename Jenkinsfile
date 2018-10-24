@@ -1,6 +1,12 @@
 node('master') {
 	stage('Poll') {
 		checkout scm
+		steps {
+	                script {
+        	            env.POMPATH = "${env.WORKSPACE}"
+                	}
+                	echo "${env.POMPATH}"
+		}
 	}
 	stage('Build and Unit test'){
 		sh 'mvn clean verify -DskipITs=true';
@@ -29,7 +35,7 @@ node('master') {
 				echo "${env.JENKINS_URL}"
 				echo "${env.BUILD_URL}"
 				echo "${env.JOB_URL}"
-				sh 'mvn clean verify -f $JOB_NAME/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
+				sh 'mvn clean verify -f $POMPATH/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
 //				sh 'mvn clean verify -f /var/lib/jenkins/workspace/ci-demo/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
 			} // SonarQube taskId is automatically attached to the pipeline context
 
