@@ -1,9 +1,8 @@
 node('master') {
+	def workspace
 	stage('Poll') {
 		checkout scm
-		def workspace = pwd()
-		echo "Watch this!"
-		echo "${workspace}"
+		workspace = pwd()
 	}
 	stage('Build and Unit test'){
 		sh 'mvn clean verify -DskipITs=true';
