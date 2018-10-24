@@ -1,6 +1,5 @@
-def workspace = pwd()
-
 node('master') {
+	def workspace = pwd()
 	stage('Poll') {
 		checkout scm
 	}
