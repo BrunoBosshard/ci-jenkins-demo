@@ -2,7 +2,6 @@ node('master') {
 	stage('Poll') {
 		checkout scm
 		env.POMPATH = "${env.WORKSPACE}"
-		echo "${env.POMPATH}"
 	}
 	stage('Build and Unit test'){
 		sh 'mvn clean verify -DskipITs=true';
@@ -12,29 +11,8 @@ node('master') {
 	stage('SonarQube Scan') {
 		node {
 			withSonarQubeEnv('Default SonarQube server') {
-				echo "${env.CHANGE_ID}"
-				echo "${env.CHANGE_URL}"
-				echo "${env.CHANGE_TITLE}"
-				echo "${env.CHANGE_AUTHOR}"
-				echo "${env.CHANGE_AUTHOR_DISPLAY_NAME}"
-				echo "${env.CHANGE_AUTHOR_EMAIL}"
-				echo "${env.CHANGE_TARGET}"
-				echo "${env.BUILD_NUMBER}"
-				echo "${env.BUILD_ID}"
-				echo "${env.BUILD_DISPLAY_NAME}"
-				echo "${env.JOB_NAME}"
-				echo "${env.EXECUTOR_NUMBER}"
-				echo "${env.NODE_NAME}"
-				echo "${env.NODE_LABELS}"
-				echo "${env.WORKSPACE}"
-				echo "${env.JENKINS_HOME}"
-				echo "${env.JENKINS_URL}"
-				echo "${env.BUILD_URL}"
-				echo "${env.JOB_URL}"
 				sh 'mvn clean verify -f $POMPATH/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
-//				sh 'mvn clean verify -f /var/lib/jenkins/workspace/ci-demo/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
 			} // SonarQube taskId is automatically attached to the pipeline context
-
 		}
 	}
 	stage('Quality Gate') {
