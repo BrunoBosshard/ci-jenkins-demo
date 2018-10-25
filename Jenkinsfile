@@ -23,22 +23,22 @@ node('master') {
 			script {
 				while(true){
 					sh "sleep 2"
-					def url="http://http://jenkins-pepgo.ngrok.io/job/${env.JOB_NAME.replaceAll('/','/job/')}/lastBuild/consoleText";
-					def sonarId = sh script: "wget -qO- --content-on-error --no-proxy --auth-no-challenge --http-user=${CRED_USR} --http-password=${CRED_PSW} '${url}'  | grep 'More about the report processing' | head -n1 ",returnStdout:true
-					sonarId = sonarId.substring(sonarId.indexOf("=")+1)
-					echo "sonarId ${sonarId}"
-					def sonarUrl = "http://sonarqube-pepgo.ngrok.io/api/ce/task?id=${sonarId}"
-					def sonarStatus = sh script: "wget -qO- '${sonarUrl}' --no-proxy --content-on-error | jq -r '.task' | jq -r '.status' ",returnStdout:true
-					echo "Sonar status ... ${sonarStatus}"
-					if(sonarStatus.trim() == "SUCCESS"){
-						echo "BREAK";
+//					def url="http://http://jenkins-pepgo.ngrok.io/job/${env.JOB_NAME.replaceAll('/','/job/')}/lastBuild/consoleText";
+//					def sonarId = sh script: "wget -qO- --content-on-error --no-proxy --auth-no-challenge --http-user=${CRED_USR} --http-password=${CRED_PSW} '${url}'  | grep 'More about the report processing' | head -n1 ",returnStdout:true
+//					sonarId = sonarId.substring(sonarId.indexOf("=")+1)
+//					echo "sonarId ${sonarId}"
+//					def sonarUrl = "http://sonarqube-pepgo.ngrok.io/api/ce/task?id=${sonarId}"
+//					def sonarStatus = sh script: "wget -qO- '${sonarUrl}' --no-proxy --content-on-error | jq -r '.task' | jq -r '.status' ",returnStdout:true
+//					echo "Sonar status ... ${sonarStatus}"
+//					if(sonarStatus.trim() == "SUCCESS"){
+//						echo "BREAK";
 						break;
-					}
-					if(sonarStatus.trim() == "FAILED "){
-						echo "FAILED"
-						currentBuild.result = 'FAILED'
-						break;
-					}
+//					}
+//					if(sonarStatus.trim() == "FAILED "){
+//						echo "FAILED"
+//						currentBuild.result = 'FAILED'
+//						break;
+//					}
 				}
 			}
 		}
