@@ -4,11 +4,13 @@ node('master') {
 		env.POMPATH = "${env.WORKSPACE}"
 	}
 	stage('Build and Unit test'){
+		dir($POMPATH)
 		sh 'mvn clean verify -DskipITs=true';
 		junit '**/target/surefire-reports/TEST-*.xml'
 		archive 'target/*.jar'
 	}
 	stage('SonarQube Scan') {
+		dir($POMPATH)
 		node {
 			withSonarQubeEnv('Default SonarQube server') {
 				sh 'mvn clean verify -f $POMPATH/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
@@ -16,7 +18,7 @@ node('master') {
 		}
 	}
 	stage('Quality Gate') {
-		sh 'sleep 10'
+		dir($POMPATH)
 		timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
 			def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
 			if (qg.status != 'OK') {
@@ -25,11 +27,13 @@ node('master') {
 		}
 	}
 	stage ('Integration Test'){
+		dir($POMPATH)
 		sh 'mvn clean verify -Dsurefire.skip=true';
 		junit '**/target/failsafe-reports/TEST-*.xml'
 		archive 'target/*.jar'
 	}
 	stage ('Publish'){
+		dir($POMPATH)		
 		def server = Artifactory.server 'Default Artifactory Server'
 		def uploadSpec = """{
 			"files": [
