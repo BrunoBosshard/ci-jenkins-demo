@@ -4,10 +4,11 @@ node('master') {
 		env.POMPATH = "${env.WORKSPACE}"
 	}
 	stage('Build and Unit test'){
-		dir('$POMPATH')
-		sh 'mvn clean verify -DskipITs=true';
-		junit '**/target/surefire-reports/TEST-*.xml'
-		archive 'target/*.jar'
+		dir('$POMPATH') {
+			sh 'mvn clean verify -DskipITs=true';
+			junit '**/target/surefire-reports/TEST-*.xml'
+			archive 'target/*.jar'
+		}
 	}
 	stage('SonarQube Scan') {
 		dir('$POMPATH')
