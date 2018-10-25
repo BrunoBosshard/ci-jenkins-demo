@@ -9,11 +9,20 @@ node('master') {
 		archive 'target/*.jar'
 	}
 	stage('SonarQube Scan') {
-		node {
+		steps {
 			withSonarQubeEnv('Default SonarQube server') {
 				sh 'mvn clean verify -f $POMPATH/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
-			} // SonarQube taskId is automatically attached to the pipeline context
+			}
+			def qualitygate = waitForQualityGate()
+			if (qualitygate.status != "OK") {
+				error "Pipeline aborted due to quality gate coverage failure: ${qualitygate.status}"
+			}
 		}
+//		node {
+//			withSonarQubeEnv('Default SonarQube server') {
+//				sh 'mvn clean verify -f $POMPATH/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
+//			} // SonarQube taskId is automatically attached to the pipeline context
+//		}
 	}
 	stage('Quality Gate') {
 		timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
