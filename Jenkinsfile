@@ -19,7 +19,7 @@ node('master') {
 		}
 	}
 	stage('Quality Gate') {
-		steps {
+//		steps {
 //			script {
 //				while(true) {
 //					sh 'sleep 2'
@@ -41,7 +41,7 @@ node('master') {
 //					}
 //				}
 //			}
-		}
+//		}
 //	timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
 //			def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
 //			if (qg.status != 'OK') {
