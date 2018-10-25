@@ -4,7 +4,7 @@ node('master') {
 		env.POMPATH = "${env.WORKSPACE}"
 	}
 	stage('Build and Unit test'){
-		dir('$POMPATH') {
+		dir(env.POMPATH) {
 			sh 'mvn clean verify -DskipITs=true';
 			junit '**/target/surefire-reports/TEST-*.xml'
 			archive 'target/*.jar'
