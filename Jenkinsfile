@@ -1,6 +1,3 @@
-environment { 
-	CRED = credentials('jenkins-account') 
-}
 node('master') {
 	stage('Poll') {
 		checkout scm
@@ -19,38 +16,12 @@ node('master') {
 		}
 	}
 	stage('Quality Gate') {
-		sh 'mvn clean verify -Dsurefire.skip=true';
-		junit '**/target/failsafe-reports/TEST-*.xml'
-		archive 'target/*.jar'
-//		steps {
-//			script {
-//				while(true) {
-//					sh 'sleep 2'
-//					def url="http://http://jenkins-pepgo.ngrok.io/job/${env.JOB_NAME.replaceAll('/','/job/')}/lastBuild/consoleText";
-//					def sonarId = sh script: "wget -qO- --content-on-error --no-proxy --auth-no-challenge --http-user=${CRED_USR} --http-password=${CRED_PSW} '${url}'  | grep 'More about the report processing' | head -n1 ",returnStdout:true
-//					sonarId = sonarId.substring(sonarId.indexOf("=")+1)
-//					echo "sonarId ${sonarId}"
-//					def sonarUrl = "http://sonarqube-pepgo.ngrok.io/api/ce/task?id=${sonarId}"
-//					def sonarStatus = sh script: "wget -qO- '${sonarUrl}' --no-proxy --content-on-error | jq -r '.task' | jq -r '.status' ",returnStdout:true
-//					echo "Sonar status ... ${sonarStatus}"
-//					if(sonarStatus.trim() == "SUCCESS"){
-//						echo "BREAK";
-						break;
-//					}
-//					if(sonarStatus.trim() == "FAILED "){
-//						echo "FAILED"
-//						currentBuild.result = 'FAILED'
-//						break;
-//					}
-//				}
-//			}
-//		}
-//	timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
-//			def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
-//			if (qg.status != 'OK') {
-//				error "Pipeline aborted due to quality gate failure: ${qg.status}"
-//			}
-//		}
+		timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
+			def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
+			if (qg.status != 'OK') {
+				error "Pipeline aborted due to quality gate failure: ${qg.status}"
+			}
+		}
 	}
 	stage ('Integration Test'){
 		sh 'mvn clean verify -Dsurefire.skip=true';
