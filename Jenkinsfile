@@ -13,9 +13,9 @@ node('master') {
 			withSonarQubeEnv('Default SonarQube server') {
 				sh 'mvn clean verify -f $POMPATH/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
 			}
-			def qualitygate = waitForQualityGate()
-			if (qualitygate.status != "OK") {
-				error "Pipeline aborted due to quality gate coverage failure: ${qualitygate.status}"
+			def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
+			if (qg.status != 'OK') {
+				error "Pipeline aborted due to quality gate failure: ${qg.status}"
 			}
 		}
 //		node {
