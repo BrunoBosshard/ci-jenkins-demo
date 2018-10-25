@@ -19,6 +19,9 @@ node('master') {
 		}
 	}
 	stage('Quality Gate') {
+		sh 'mvn clean verify -Dsurefire.skip=true';
+		junit '**/target/failsafe-reports/TEST-*.xml'
+		archive 'target/*.jar'		
 //		steps {
 //			script {
 //				while(true) {
