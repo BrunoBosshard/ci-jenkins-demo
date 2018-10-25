@@ -21,8 +21,8 @@ node('master') {
 	stage('Quality Gate') {
 		steps {
 			script {
-				while(true){
-					sh "sleep 2"
+				while(true) {
+					sh 'sleep 2'
 //					def url="http://http://jenkins-pepgo.ngrok.io/job/${env.JOB_NAME.replaceAll('/','/job/')}/lastBuild/consoleText";
 //					def sonarId = sh script: "wget -qO- --content-on-error --no-proxy --auth-no-challenge --http-user=${CRED_USR} --http-password=${CRED_PSW} '${url}'  | grep 'More about the report processing' | head -n1 ",returnStdout:true
 //					sonarId = sonarId.substring(sonarId.indexOf("=")+1)
