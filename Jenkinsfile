@@ -8,7 +8,7 @@ node('master') {
 		junit '**/target/surefire-reports/TEST-*.xml'
 		archive 'target/*.jar'
 	}
-	stage('SonarQube Scan and Quality Gate') {
+	stage('SonarQube Scan') {
 		node {
 			withSonarQubeEnv('Default SonarQube server') {
 				sh 'mvn clean verify -f $POMPATH/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
@@ -16,11 +16,24 @@ node('master') {
 		}
 	}
 	stage('Quality Gate') {
-		timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
-			def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
-			if (qg.status != 'OK') {
-				error "Pipeline aborted due to quality gate failure: ${qg.status}"
+		sh "cat $POMPATH/target/sonar/report-task.txt"
+		defprops = readProperties file: '$POMPATH/target/sonar/report-task.txt'
+		defsonarServerUrl=props['serverUrl']
+		defceTaskUrl= props['ceTaskUrl']
+		defceTask
+		timeout(time: 1, unit: 'MINUTES') {
+			waitUntil {
+				defresponse = httpRequest ceTaskUrl
+				ceTask = readJSON text: response.content
+				echo ceTask.toString()
+				return"SUCCESS".equals(ceTask["task"]["status"])
 			}
+		}
+		defresponse = httpRequest url : sonarServerUrl + "/api/qualitygates/project_status?analysisId="+ ceTask["task"]["analysisId"], authentication: 'jenkins-account'
+		defqualitygate =  readJSON text: response.content
+		echo qualitygate.toString()
+		if("ERROR".equals(qualitygate["projectStatus"]["status"])) {
+			error  "Quality Gate failure"
 		}
 	}
 	stage ('Integration Test'){
