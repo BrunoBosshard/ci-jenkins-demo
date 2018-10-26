@@ -10,36 +10,14 @@ node('master') {
 	stage('SonarQube Scan') {
 		withSonarQubeEnv('Default SonarQube server') {
 			sh 'mvn clean verify sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
-			// sh 'mvn clean verify -f $POMPATH/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
 		}
 	}
-	stage("Quality Gate TEMP") {
+	stage('SonarQube Quality Gate') {
 		timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
 			def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
 			if (qg.status != 'OK') {
 				error "Pipeline aborted due to quality gate failure: ${qg.status}"
 			}
-		}
-	}
-	stage('SonarQube Quality Gate') {
-		sh 'cat target/sonar/report-task.txt'
-		def props = readProperties file: 'target/sonar/report-task.txt'
-		def sonarServerUrl = props['serverUrl']
-		def ceTaskUrl = props['ceTaskUrl']
-		def ceTask
-		timeout(time: 1, unit: 'MINUTES') {
-			waitUntil {
-				def response = httpRequest ceTaskUrl
-				ceTask = readJSON text: response.content
-				echo ceTask.toString()
-				return"SUCCESS".equals(ceTask["task"]["status"])
-			}
-		}
-		def response = httpRequest url : sonarServerUrl + "/api/qualitygates/project_status?analysisId="+ ceTask["task"]["analysisId"], authentication: 'sonarqube-account'
-		def qualitygate =  readJSON text: response.content
-		echo qualitygate.toString()
-		if("ERROR".equals(qualitygate["projectStatus"]["status"])) {
-			error  "SonarQube Quality Gate failure"
 		}
 	}
 	stage ('Integration Test'){
