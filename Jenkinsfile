@@ -17,20 +17,20 @@ node('master') {
 	}
 	stage('Quality Gate') {
 		sh 'cat target/sonar/report-task.txt'
-		defprops = readProperties file: 'target/sonar/report-task.txt'
-		defsonarServerUrl=props['serverUrl']
-		defceTaskUrl= props['ceTaskUrl']
-		defceTask
+		def props = readProperties file: 'target/sonar/report-task.txt'
+		def sonarServerUrl = props['serverUrl']
+		def ceTaskUrl = props['ceTaskUrl']
+		def ceTask
 		timeout(time: 1, unit: 'MINUTES') {
 			waitUntil {
-				defresponse = httpRequest ceTaskUrl
+				def response = httpRequest ceTaskUrl
 				ceTask = readJSON text: response.content
 				echo ceTask.toString()
 				return"SUCCESS".equals(ceTask["task"]["status"])
 			}
 		}
-		defresponse = httpRequest url : sonarServerUrl + "/api/qualitygates/project_status?analysisId="+ ceTask["task"]["analysisId"], authentication: 'jenkins-account'
-		defqualitygate =  readJSON text: response.content
+		def response = httpRequest url : sonarServerUrl + "/api/qualitygates/project_status?analysisId="+ ceTask["task"]["analysisId"], authentication: 'jenkins-account'
+		def qualitygate =  readJSON text: response.content
 		echo qualitygate.toString()
 		if("ERROR".equals(qualitygate["projectStatus"]["status"])) {
 			error  "Quality Gate failure"
