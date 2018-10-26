@@ -1,8 +1,9 @@
 node('master') {
-	ws('var/lib/jenkins/workspace/ci-jenkins-demo') {	
+	env.SHAREDWORKSPACE = "${env.WORKSPACE}"
+	ws('$SHAREDWORKSPACE') {	
 		stage('Poll') {
 			checkout scm
-			env.POMPATH = "${env.WORKSPACE}"
+//			env.POMPATH = "${env.WORKSPACE}"
 		}
 		stage('Build and Unit test'){
 			sh 'mvn clean verify -DskipITs=true';
@@ -12,7 +13,8 @@ node('master') {
 		stage('SonarQube Scan') {
 			node {
 				withSonarQubeEnv('Default SonarQube server') {
-					sh 'mvn clean verify -f $POMPATH/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
+					sh 'mvn clean verify sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
+//					sh 'mvn clean verify -f $POMPATH/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
 				} // SonarQube taskId is automatically attached to the pipeline context
 			}
 		}
