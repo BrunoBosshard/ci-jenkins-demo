@@ -1,8 +1,4 @@
-pipeline {
-	agent {
-		stages {
-node {
-	customWorkspace '/var/lib/jenkins/workspace/ci-jenkins-demo'
+node('master') {
 	stage('Poll') {
 		checkout scm
 		env.POMPATH = "${env.WORKSPACE}"
@@ -45,7 +41,4 @@ node {
 		}"""
 		server.upload(uploadSpec)
 	}
-}
-	}
-}
 }
