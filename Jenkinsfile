@@ -1,3 +1,5 @@
+pipeline {
+	agent {
 node('master') {
 	customWorkspace '/var/lib/jenkins/workspace/ci-jenkins-demo'
 	stage('Poll') {
@@ -41,5 +43,7 @@ node('master') {
 			]
 		}"""
 		server.upload(uploadSpec)
+	}
+}
 	}
 }
