@@ -15,7 +15,7 @@ node('master') {
 			} // SonarQube taskId is automatically attached to the pipeline context
 		}
 	}
-	stage('Quality Gate') {
+	stage('SonarQube Quality Gate') {
 		sh 'cat target/sonar/report-task.txt'
 		def props = readProperties file: 'target/sonar/report-task.txt'
 		def sonarServerUrl = props['serverUrl']
@@ -33,7 +33,7 @@ node('master') {
 		def qualitygate =  readJSON text: response.content
 		echo qualitygate.toString()
 		if("ERROR".equals(qualitygate["projectStatus"]["status"])) {
-			error  "Quality Gate failure"
+			error  "SonarQube Quality Gate failure"
 		}
 	}
 	stage ('Integration Test'){
