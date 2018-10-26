@@ -1,5 +1,5 @@
-ws('var/lib/jenkins/workspace/ci-jenkins-demo') {
-	node('master') {
+node('master') {
+	ws('var/lib/jenkins/workspace/ci-jenkins-demo') {	
 		stage('Poll') {
 			checkout scm
 			env.POMPATH = "${env.WORKSPACE}"
