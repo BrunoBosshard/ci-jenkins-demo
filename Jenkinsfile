@@ -16,6 +16,7 @@ node('master') {
 		}
 	}
 	stage('Quality Gate') {
+		sh 'sleep 10'
 		sh 'cat $POMPATH/target/sonar/report-task.txt'
 		defprops = readProperties file: '$POMPATH/target/sonar/report-task.txt'
 		defsonarServerUrl=props['serverUrl']
