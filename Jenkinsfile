@@ -3,12 +3,12 @@ node('master') {
 		checkout scm
 		env.POMPATH = "${env.WORKSPACE}"
 	}
-	stage('Build and Unit test'){
+	stage('Build and Unit Test'){
 		sh 'mvn clean verify -DskipITs=true';
 		junit '**/target/surefire-reports/TEST-*.xml'
 		archive 'target/*.jar'
 	}
-	stage('SonarQube Scan') {
+	stage('SonarQube Scan and Quality Gate') {
 		node {
 			withSonarQubeEnv('Default SonarQube server') {
 				sh 'mvn clean verify -f $POMPATH/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
@@ -21,14 +21,6 @@ node('master') {
 					}
 				}
 			} // SonarQube taskId is automatically attached to the pipeline context
-		}
-	}
-	stage('Quality Gate') {
-		timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
-			def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
-			if (qg.status != 'OK') {
-				error "Pipeline aborted due to quality gate failure: ${qg.status}"
-			}
 		}
 	}
 	stage ('Integration Test'){
