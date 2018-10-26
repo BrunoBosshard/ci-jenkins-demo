@@ -1,7 +1,7 @@
 pipeline {
 	agent {
 		stages {
-node('master') {
+node {
 	customWorkspace '/var/lib/jenkins/workspace/ci-jenkins-demo'
 	stage('Poll') {
 		checkout scm
