@@ -1,5 +1,6 @@
 pipeline {
 	agent {
+		stages {
 node('master') {
 	customWorkspace '/var/lib/jenkins/workspace/ci-jenkins-demo'
 	stage('Poll') {
@@ -46,4 +47,5 @@ node('master') {
 	}
 }
 	}
+}
 }
