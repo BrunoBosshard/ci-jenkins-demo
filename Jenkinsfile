@@ -1,6 +1,6 @@
 pipeline {
 	agent {
-		node('master') {
+		node {
 			stage('Poll') {
 				checkout scm
 				env.POMPATH = "${env.WORKSPACE}"
