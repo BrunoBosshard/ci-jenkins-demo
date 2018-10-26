@@ -29,7 +29,7 @@ node('master') {
 				return"SUCCESS".equals(ceTask["task"]["status"])
 			}
 		}
-		def response = httpRequest url : sonarServerUrl + "/api/qualitygates/project_status?analysisId="+ ceTask["task"]["analysisId"], authentication: 'jenkins-account'
+		def response = httpRequest url : sonarServerUrl + "/api/qualitygates/project_status?analysisId="+ ceTask["task"]["analysisId"], authentication: credentials('jenkins-account')
 		def qualitygate =  readJSON text: response.content
 		echo qualitygate.toString()
 		if("ERROR".equals(qualitygate["projectStatus"]["status"])) {
