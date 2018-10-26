@@ -1,7 +1,6 @@
 node('master') {
 	stage('Poll') {
 		checkout scm
-		env.POMPATH = "${env.WORKSPACE}"
 	}
 	stage('Build and Unit Test'){
 		sh 'mvn clean verify -DskipITs=true';
@@ -9,10 +8,18 @@ node('master') {
 		archive 'target/*.jar'
 	}
 	stage('SonarQube Scan') {
-			withSonarQubeEnv('Default SonarQube server') {
-				sh 'mvn clean verify sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
-				// sh 'mvn clean verify -f $POMPATH/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
+		withSonarQubeEnv('Default SonarQube server') {
+			sh 'mvn clean verify sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
+			// sh 'mvn clean verify -f $POMPATH/pom.xml sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
+		}
+	}
+	stage("Quality Gate TEMP") {
+		timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
+			def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
+			if (qg.status != 'OK') {
+				error "Pipeline aborted due to quality gate failure: ${qg.status}"
 			}
+		}
 	}
 	stage('SonarQube Quality Gate') {
 		sh 'cat target/sonar/report-task.txt'
