@@ -8,6 +8,7 @@ node('master') {
 		archive 'target/*.jar'
 	}
 	stage('SonarQube Scan') {
+		// Create JaCoCo code coverage report
 		sh 'mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Dmaven.test.failure.ignore=false'
 		withSonarQubeEnv('Default SonarQube server') {
 			sh 'mvn clean verify sonar:sonar -Dsonar.projectName=example-project -Dsonar.projectKey=example-project -Dsonar.projectVersion=$BUILD_NUMBER';
