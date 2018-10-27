@@ -30,7 +30,7 @@ node('master') {
 		def uploadSpec = """{
 			"files": [
 				{
-					"pattern": "target/hello-0.0.1.war",
+					"pattern": "target/*.war",
 					"target": "example-project/${BUILD_NUMBER}/",
 					"props": "Integration-Tested=Yes;Performance-Tested=No"
 				}
